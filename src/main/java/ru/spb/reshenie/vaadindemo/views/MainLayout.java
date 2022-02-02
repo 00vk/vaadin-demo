@@ -22,7 +22,7 @@ import ru.spb.reshenie.vaadindemo.views.helloworld.HelloWorldView;
 /**
  * The main view is a top-level placeholder for other views.
  */
-@PageTitle("Main")
+@PageTitle("Vaadin Demo | Main")
 public class MainLayout extends AppLayout {
 
     /**
