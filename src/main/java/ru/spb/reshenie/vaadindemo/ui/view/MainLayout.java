@@ -1,4 +1,4 @@
-package ru.spb.reshenie.vaadindemo.views;
+package ru.spb.reshenie.vaadindemo.ui.view;
 
 
 import com.vaadin.flow.component.Component;
@@ -7,7 +7,6 @@ import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.html.Footer;
-import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Header;
 import com.vaadin.flow.component.html.ListItem;
@@ -16,8 +15,6 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.html.UnorderedList;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouterLink;
-import ru.spb.reshenie.vaadindemo.views.about.AboutView;
-import ru.spb.reshenie.vaadindemo.views.helloworld.HelloWorldView;
 
 /**
  * The main view is a top-level placeholder for other views.
@@ -25,50 +22,7 @@ import ru.spb.reshenie.vaadindemo.views.helloworld.HelloWorldView;
 @PageTitle("Vaadin Demo | Main")
 public class MainLayout extends AppLayout {
 
-    /**
-     * A simple navigation item component, based on ListItem element.
-     */
-    public static class MenuItemInfo extends ListItem {
-
-        private final Class<? extends Component> view;
-
-        public MenuItemInfo(String menuTitle, String iconClass, Class<? extends Component> view) {
-            this.view = view;
-            RouterLink link = new RouterLink();
-            // Use Lumo classnames for various styling
-            link.addClassNames("flex", "mx-s", "p-s", "relative", "text-secondary");
-            link.setRoute(view);
-
-            Span text = new Span(menuTitle);
-            // Use Lumo classnames for various styling
-            text.addClassNames("font-medium", "text-s");
-
-            link.add(new LineAwesomeIcon(iconClass), text);
-            add(link);
-        }
-
-        public Class<?> getView() {
-            return view;
-        }
-
-        /**
-         * Simple wrapper to create icons using LineAwesome iconset. See
-         * https://icons8.com/line-awesome
-         */
-        @NpmPackage(value = "line-awesome", version = "1.3.0")
-        public static class LineAwesomeIcon extends Span {
-            public LineAwesomeIcon(String lineawesomeClassnames) {
-                // Use Lumo classnames for suitable font size and margin
-                addClassNames("me-s", "text-l");
-                if (!lineawesomeClassnames.isEmpty()) {
-                    addClassNames(lineawesomeClassnames);
-                }
-            }
-        }
-
-    }
-
-    private H1 viewTitle;
+    private H2 viewTitle;
 
     public MainLayout() {
         setPrimarySection(Section.DRAWER);
@@ -82,7 +36,7 @@ public class MainLayout extends AppLayout {
         toggle.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
         toggle.getElement().setAttribute("aria-label", "Menu toggle");
 
-        viewTitle = new H1();
+        viewTitle = new H2();
         viewTitle.addClassNames("m-0", "text-l");
 
         Header header = new Header(toggle, viewTitle);
@@ -119,29 +73,78 @@ public class MainLayout extends AppLayout {
     }
 
     private MenuItemInfo[] createMenuItems() {
-        return new MenuItemInfo[]{ //
-                new MenuItemInfo("Hello World", "la la-globe", HelloWorldView.class), //
-
-                new MenuItemInfo("About", "la la-file", AboutView.class), //
-
+        return new MenuItemInfo[]{
+                new MenuItemInfo("Hello World", "la la-globe", HelloWorldView.class),
+                new MenuItemInfo("Contacts", "la la-list-ul", ContactsView.class),
+                new MenuItemInfo("About", "la la-file", AboutView.class)
         };
     }
 
     private Footer createFooter() {
         Footer layout = new Footer();
         layout.addClassNames("flex", "items-center", "my-s", "px-m", "py-xs");
-
         return layout;
     }
 
     @Override
     protected void afterNavigation() {
         super.afterNavigation();
-        viewTitle.setText(getCurrentPageTitle());
+        String[] split = getCurrentPageTitle().split("\\|");
+        String titleText;
+        if (split.length == 1) {
+            titleText = split[0];
+        } else {
+            titleText = split[1].strip();
+        }
+        viewTitle.setText(titleText);
     }
 
     private String getCurrentPageTitle() {
         PageTitle title = getContent().getClass().getAnnotation(PageTitle.class);
         return title == null ? "" : title.value();
+    }
+
+    /**
+     * A simple navigation item component, based on ListItem element.
+     */
+    public static class MenuItemInfo extends ListItem {
+
+        private final Class<? extends Component> view;
+
+        public MenuItemInfo(String menuTitle, String iconClass, Class<? extends Component> view) {
+            this.view = view;
+            RouterLink link = new RouterLink();
+            // Use Lumo classnames for various styling
+            link.addClassNames("flex", "mx-s", "p-s", "relative", "text-secondary");
+            link.setRoute(view);
+
+            Span text = new Span(menuTitle);
+            // Use Lumo classnames for various styling
+            text.addClassNames("font-medium", "text-s");
+
+            link.add(new LineAwesomeIcon(iconClass), text);
+            add(link);
+        }
+
+        public Class<?> getView() {
+            return view;
+        }
+
+        /**
+         * Simple wrapper to create icons using LineAwesome iconset. See
+         * https://icons8.com/line-awesome
+         */
+        @NpmPackage(value = "line-awesome", version = "1.3.0")
+        public static class LineAwesomeIcon extends Span {
+
+            public LineAwesomeIcon(String lineawesomeClassnames) {
+                // Use Lumo classnames for suitable font size and margin
+                addClassNames("me-s", "text-l");
+                if (!lineawesomeClassnames.isEmpty()) {
+                    addClassNames(lineawesomeClassnames);
+                }
+            }
+        }
+
     }
 }

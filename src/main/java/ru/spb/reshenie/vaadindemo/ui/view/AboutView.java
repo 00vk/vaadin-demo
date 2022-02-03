@@ -1,4 +1,4 @@
-package ru.spb.reshenie.vaadindemo.views.about;
+package ru.spb.reshenie.vaadindemo.ui.view;
 
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
@@ -6,9 +6,8 @@ import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import ru.spb.reshenie.vaadindemo.views.MainLayout;
 
-@PageTitle("About")
+@PageTitle("Vaadin Demo | About")
 @Route(value = "about", layout = MainLayout.class)
 public class AboutView extends VerticalLayout {
 
