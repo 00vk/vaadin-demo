@@ -40,12 +40,6 @@ public class ContactView extends VerticalLayout {
         closeEditor();
     }
 
-    private void closeEditor() {
-        form.setContact(null);
-        form.setVisible(false);
-        removeClassName("contact-editing");
-    }
-
     private void addComponents() {
         add(createToolbar());
         add(createContentLayout());
@@ -92,6 +86,18 @@ public class ContactView extends VerticalLayout {
     private void configureForm() {
         form = new ContactForm(service.findAllCompanies(), service.findAllStatuses());
         form.setWidth("25em");
+
+        form.addListener(ContactFormEvent.SaveEvent.class, event1 -> {
+            service.saveContact(event1.getContact());
+            updateList();
+            closeEditor();
+        });
+        form.addListener(ContactFormEvent.CloseEvent.class, event -> closeEditor());
+        form.addListener(ContactFormEvent.DeleteEvent.class, event -> {
+            service.deleteContact(event.getContact());
+            updateList();
+            closeEditor();
+        });
     }
 
     private void openEditor(Contact contact) {
@@ -102,6 +108,12 @@ public class ContactView extends VerticalLayout {
         form.setContact(contact);
         form.setVisible(true);
         addClassName("contact-editing");
+    }
+
+    private void closeEditor() {
+        form.setContact(null);
+        form.setVisible(false);
+        removeClassName("contact-editing");
     }
 
     private void updateList() {
