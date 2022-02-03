@@ -15,7 +15,7 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.html.UnorderedList;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouterLink;
-import ru.spb.reshenie.vaadindemo.ui.contact.ContactsView;
+import ru.spb.reshenie.vaadindemo.ui.contact.ContactView;
 
 /**
  * The main view is a top-level placeholder for other views.
@@ -76,7 +76,7 @@ public class MainLayout extends AppLayout {
     private MenuItemInfo[] createMenuItems() {
         return new MenuItemInfo[]{
                 new MenuItemInfo("Hello World", "la la-globe", HelloWorldView.class),
-                new MenuItemInfo("Contacts", "la la-list-ul", ContactsView.class),
+                new MenuItemInfo("Contacts", "la la-list-ul", ContactView.class),
                 new MenuItemInfo("About", "la la-file", AboutView.class)
         };
     }

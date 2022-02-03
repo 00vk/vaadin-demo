@@ -21,16 +21,16 @@ import ru.spb.reshenie.vaadindemo.ui.MainLayout;
 
 @Route(value = "contacts", layout = MainLayout.class)
 @PageTitle(value = "Vaadin Demo | Contacts")
-public class ContactsView extends VerticalLayout {
+public class ContactView extends VerticalLayout {
 
     private final Grid<Contact> grid = new Grid<>(Contact.class);
     private ContactForm form;
     private final TextField tfFilter = new TextField();
     private final CrmService service;
 
-    public ContactsView(CrmService service) {
+    public ContactView(CrmService service) {
         this.service = service;
-        addClassName("list-view");
+        addClassName("contact-view");
         setSizeFull();
 
         configureGrid();
@@ -43,7 +43,7 @@ public class ContactsView extends VerticalLayout {
     private void closeEditor() {
         form.setContact(null);
         form.setVisible(false);
-        removeClassName("contacts-editing");
+        removeClassName("contact-editing");
     }
 
     private void addComponents() {
@@ -57,16 +57,23 @@ public class ContactsView extends VerticalLayout {
         tfFilter.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
 
         Button addContact = new Button(new Icon(VaadinIcon.PLUS));
+        addContact.addClickListener(e -> addContact());
+
         HorizontalLayout toolbar = new HorizontalLayout(tfFilter, addContact);
-        toolbar.setClassName("contacts-toolbar");
+        toolbar.setClassName("contact-toolbar");
         return toolbar;
+    }
+
+    private void addContact() {
+        grid.asSingleSelect().clear();
+        openEditor(new Contact());
     }
 
     private Component createContentLayout() {
         HorizontalLayout content = new HorizontalLayout(grid, form);
         content.setFlexGrow(2, grid);
         content.setFlexGrow(1, form);
-        content.setClassName("contacts-content");
+        content.setClassName("contact-content");
         content.setSizeFull();
         return content;
     }
@@ -74,7 +81,8 @@ public class ContactsView extends VerticalLayout {
     private void configureGrid() {
         grid.addClassName("contact-grid");
         grid.setSizeFull();
-        grid.setColumns("firstName", "lastName", "email", "status");
+        grid.setColumns("firstName", "lastName", "email");
+        grid.addColumn(contact -> contact.getStatus().getName()).setHeader("Status");
         grid.addColumn(contact -> contact.getCompany().getName()).setHeader("Company");
 
         grid.asSingleSelect().addValueChangeListener(e -> openEditor(e.getValue()));
@@ -93,7 +101,7 @@ public class ContactsView extends VerticalLayout {
         }
         form.setContact(contact);
         form.setVisible(true);
-        addClassName("contacts-editing");
+        addClassName("contact-editing");
     }
 
     private void updateList() {
