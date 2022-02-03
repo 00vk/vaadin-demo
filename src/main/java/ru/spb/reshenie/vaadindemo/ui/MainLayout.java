@@ -1,4 +1,4 @@
-package ru.spb.reshenie.vaadindemo.ui.view;
+package ru.spb.reshenie.vaadindemo.ui;
 
 
 import com.vaadin.flow.component.Component;
@@ -15,6 +15,7 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.html.UnorderedList;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouterLink;
+import ru.spb.reshenie.vaadindemo.ui.contact.ContactsView;
 
 /**
  * The main view is a top-level placeholder for other views.

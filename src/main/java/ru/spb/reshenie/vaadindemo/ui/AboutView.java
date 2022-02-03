@@ -1,4 +1,4 @@
-package ru.spb.reshenie.vaadindemo.ui.view;
+package ru.spb.reshenie.vaadindemo.ui;
 
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;

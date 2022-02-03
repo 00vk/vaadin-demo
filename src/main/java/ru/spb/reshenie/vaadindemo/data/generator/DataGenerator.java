@@ -33,7 +33,7 @@ public class DataGenerator {
                 logger.info("Using existing database");
                 return;
             }
-            int seed = 123;
+            int seed = 99;
 
             logger.info("Generating demo data");
             ExampleDataGenerator<Company> companyGenerator = new ExampleDataGenerator<>(Company.class,
