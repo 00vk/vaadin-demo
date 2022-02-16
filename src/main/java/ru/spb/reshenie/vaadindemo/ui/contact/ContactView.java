@@ -8,6 +8,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import ru.spb.reshenie.vaadindemo.data.entity.Contact;
@@ -49,6 +50,7 @@ public class ContactView extends VerticalLayout {
         tfFilter.setPlaceholder("Найти...");
         tfFilter.setClearButtonVisible(true);
         tfFilter.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
+        tfFilter.setValueChangeMode(ValueChangeMode.LAZY);
 
         Button addContact = new Button(new Icon(VaadinIcon.PLUS));
         addContact.addClickListener(e -> addContact());
