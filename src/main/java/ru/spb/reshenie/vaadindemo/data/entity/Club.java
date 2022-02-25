@@ -10,13 +10,14 @@ import java.util.List;
 
 @Entity
 @Table
-public class Company extends AbstractEntity {
+public class Club extends AbstractEntity {
+
     @NotBlank
     private String name;
 
-    @OneToMany(mappedBy = "company")
+    @OneToMany(mappedBy = "club")
     @Nullable
-    private List<Contact> employees = new LinkedList<>();
+    private List<Moderator> employees = new LinkedList<>();
 
     public String getName() {
         return name;
@@ -26,11 +27,11 @@ public class Company extends AbstractEntity {
         this.name = name;
     }
 
-    public List<Contact> getEmployees() {
+    public List<Moderator> getEmployees() {
         return employees;
     }
 
-    public void setEmployees(List<Contact> employees) {
+    public void setEmployees(List<Moderator> employees) {
         this.employees = employees;
     }
 }

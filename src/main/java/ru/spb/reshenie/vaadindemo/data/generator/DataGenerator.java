@@ -7,62 +7,64 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
-import ru.spb.reshenie.vaadindemo.data.entity.Company;
-import ru.spb.reshenie.vaadindemo.data.entity.Contact;
-import ru.spb.reshenie.vaadindemo.data.entity.Status;
-import ru.spb.reshenie.vaadindemo.data.repository.CompanyRepository;
-import ru.spb.reshenie.vaadindemo.data.repository.ContactRepository;
-import ru.spb.reshenie.vaadindemo.data.repository.StatusRepository;
+import ru.spb.reshenie.vaadindemo.data.entity.Club;
+import ru.spb.reshenie.vaadindemo.data.entity.Moderator;
+import ru.spb.reshenie.vaadindemo.data.repository.ClubRepository;
+import ru.spb.reshenie.vaadindemo.data.repository.ModeratorRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @SpringComponent
 public class DataGenerator {
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Bean
-    public CommandLineRunner loadData(ContactRepository contactRepository, CompanyRepository companyRepository,
-                                      StatusRepository statusRepository) {
+    public CommandLineRunner loadData(ModeratorRepository moderatorRepository,
+                                      ClubRepository clubRepository) {
 
         return args -> {
-            Logger logger = LoggerFactory.getLogger(getClass());
-            if (contactRepository.count() != 0L) {
+            if (moderatorRepository.count() != 0L) {
                 logger.info("Using existing database");
                 return;
             }
             int seed = 99;
 
             logger.info("Generating demo data");
-            ExampleDataGenerator<Company> companyGenerator = new ExampleDataGenerator<>(Company.class,
-                    LocalDateTime.now());
-            companyGenerator.setData(Company::setName, DataType.COMPANY_NAME);
-            List<Company> companies = companyRepository.saveAll(companyGenerator.create(5, seed));
 
-            List<Status> statuses = Stream.of("Imported lead", "Not contacted", "Contacted", "Customer", "Closed (lost)")
-                                          .map(Status::new)
-                                          .collect(Collectors.toList());
-            statusRepository.saveAll(statuses);
+            List<Club> clubs = generateClubs(seed);
+            List<Moderator> moderators = generateModerators(clubs, seed);
 
-            logger.info("... generating 50 Contact entities...");
-            ExampleDataGenerator<Contact> contactGenerator = new ExampleDataGenerator<>(Contact.class,
-                    LocalDateTime.now());
-            contactGenerator.setData(Contact::setFirstName, DataType.FIRST_NAME);
-            contactGenerator.setData(Contact::setLastName, DataType.LAST_NAME);
-            contactGenerator.setData(Contact::setEmail, DataType.EMAIL);
-
-            Random r = new Random(seed);
-            List<Contact> contacts = contactGenerator.create(50, seed).stream().peek(contact -> {
-                contact.setCompany(companies.get(r.nextInt(companies.size())));
-                contact.setStatus(statuses.get(r.nextInt(statuses.size())));
-            }).collect(Collectors.toList());
-
-            contactRepository.saveAll(contacts);
+            clubRepository.saveAll(clubs);
+            moderatorRepository.saveAll(moderators);
 
             logger.info("Generated demo data");
         };
+    }
+
+    private List<Club> generateClubs(int seed) {
+        ExampleDataGenerator<Club> clubGenerator = new ExampleDataGenerator<>(Club.class, LocalDateTime.now());
+        clubGenerator.setData(Club::setName, DataType.COMPANY_NAME);
+        return clubGenerator.create(5, seed);
+    }
+
+    private List<Moderator> generateModerators(List<Club> clubs,
+                                               int seed) {
+        logger.info("... generating 10 Moderator entities...");
+        ExampleDataGenerator<Moderator> moderatorGenerator;
+        moderatorGenerator = new ExampleDataGenerator<>(Moderator.class, LocalDateTime.now());
+        moderatorGenerator.setData(Moderator::setFirstName, DataType.FIRST_NAME);
+        moderatorGenerator.setData(Moderator::setLastName, DataType.LAST_NAME);
+        moderatorGenerator.setData(Moderator::setEmail, DataType.EMAIL);
+        Random r = new Random(seed);
+
+        return moderatorGenerator.create(10, seed)
+                                 .stream()
+                                 .peek(moderator -> moderator.setClub(clubs.get(r.nextInt(clubs.size()))))
+                                 .collect(Collectors.toList());
     }
 
 }

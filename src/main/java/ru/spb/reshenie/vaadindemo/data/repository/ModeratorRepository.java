@@ -3,14 +3,14 @@ package ru.spb.reshenie.vaadindemo.data.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import ru.spb.reshenie.vaadindemo.data.entity.Contact;
+import ru.spb.reshenie.vaadindemo.data.entity.Moderator;
 
 import java.util.List;
 
-public interface ContactRepository extends JpaRepository<Contact, Integer> {
+public interface ModeratorRepository extends JpaRepository<Moderator, String> {
 
-    @Query("select c from Contact c " +
+    @Query("select c from Moderator c " +
            "where lower(c.firstName) like lower(concat('%', :searchTerm, '%')) " +
            "or lower(c.lastName) like lower(concat('%', :searchTerm, '%'))")
-    List<Contact> search(@Param("searchTerm") String searchTerm);
+    List<Moderator> search(@Param("searchTerm") String searchTerm);
 }

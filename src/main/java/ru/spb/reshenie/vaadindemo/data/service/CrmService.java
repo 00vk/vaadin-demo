@@ -1,12 +1,10 @@
 package ru.spb.reshenie.vaadindemo.data.service;
 
 import org.springframework.stereotype.Service;
-import ru.spb.reshenie.vaadindemo.data.entity.Company;
-import ru.spb.reshenie.vaadindemo.data.entity.Contact;
-import ru.spb.reshenie.vaadindemo.data.entity.Status;
-import ru.spb.reshenie.vaadindemo.data.repository.CompanyRepository;
-import ru.spb.reshenie.vaadindemo.data.repository.ContactRepository;
-import ru.spb.reshenie.vaadindemo.data.repository.StatusRepository;
+import ru.spb.reshenie.vaadindemo.data.entity.Club;
+import ru.spb.reshenie.vaadindemo.data.entity.Moderator;
+import ru.spb.reshenie.vaadindemo.data.repository.ClubRepository;
+import ru.spb.reshenie.vaadindemo.data.repository.ModeratorRepository;
 
 import java.util.List;
 
@@ -17,47 +15,40 @@ import java.util.List;
 @Service
 public class CrmService {
 
-    private final ContactRepository contactRepository;
-    private final CompanyRepository companyRepository;
-    private final StatusRepository statusRepository;
+    private final ModeratorRepository moderatorRepository;
+    private final ClubRepository clubRepository;
 
-    public CrmService(ContactRepository contactRepository,
-                      CompanyRepository companyRepository,
-                      StatusRepository statusRepository) {
-        this.contactRepository = contactRepository;
-        this.companyRepository = companyRepository;
-        this.statusRepository = statusRepository;
+    public CrmService(ModeratorRepository moderatorRepository,
+                      ClubRepository clubRepository) {
+        this.moderatorRepository = moderatorRepository;
+        this.clubRepository = clubRepository;
     }
 
-    public List<Contact> findAllContacts(String stringFilter) {
+    public List<Moderator> findAllModerators(String stringFilter) {
         if (stringFilter == null || stringFilter.isEmpty()) {
-            return contactRepository.findAll();
+            return moderatorRepository.findAll();
         } else {
-            return contactRepository.search(stringFilter);
+            return moderatorRepository.search(stringFilter);
         }
     }
 
-    public long countContacts() {
-        return contactRepository.count();
+    public long countModerators() {
+        return moderatorRepository.count();
     }
 
-    public void deleteContact(Contact contact) {
-        contactRepository.delete(contact);
+    public void deleteModerator(Moderator moderator) {
+        moderatorRepository.delete(moderator);
     }
 
-    public void saveContact(Contact contact) {
-        if (contact == null) {
-            System.err.println("Contact is null. Are you sure you have connected your form to the application?");
+    public void saveModerator(Moderator moderator) {
+        if (moderator == null) {
+            System.err.println("Moderator is null. Are you sure you have connected your form to the application?");
             return;
         }
-        contactRepository.save(contact);
+        moderatorRepository.save(moderator);
     }
 
-    public List<Company> findAllCompanies() {
-        return companyRepository.findAll();
-    }
-
-    public List<Status> findAllStatuses(){
-        return statusRepository.findAll();
+    public List<Club> findAllCompanies() {
+        return clubRepository.findAll();
     }
 }

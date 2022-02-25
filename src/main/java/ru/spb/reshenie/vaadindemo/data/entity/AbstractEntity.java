@@ -1,5 +1,7 @@
 package ru.spb.reshenie.vaadindemo.data.entity;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
@@ -8,14 +10,15 @@ import javax.persistence.MappedSuperclass;
 public abstract class AbstractEntity {
 
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    private String id;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

@@ -1,7 +1,5 @@
 package ru.spb.reshenie.vaadindemo.data.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -12,7 +10,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table
-public class Contact extends AbstractEntity {
+public class Moderator extends AbstractEntity {
 
     @NotEmpty
     private String firstName = "";
@@ -21,14 +19,9 @@ public class Contact extends AbstractEntity {
     private String lastName = "";
 
     @ManyToOne
-    @JoinColumn(name = "company_id")
+    @JoinColumn(name = "club_id")
     @NotNull
-    @JsonIgnoreProperties({"employees"})
-    private Company company;
-
-    @NotNull
-    @ManyToOne
-    private Status status;
+    private Club club;
 
     @Email
     @NotEmpty
@@ -55,20 +48,12 @@ public class Contact extends AbstractEntity {
         this.lastName = lastName;
     }
 
-    public Company getCompany() {
-        return company;
+    public Club getClub() {
+        return club;
     }
 
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
+    public void setClub(Club club) {
+        this.club = club;
     }
 
     public String getEmail() {

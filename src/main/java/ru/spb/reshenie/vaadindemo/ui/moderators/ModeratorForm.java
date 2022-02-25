@@ -1,4 +1,4 @@
-package ru.spb.reshenie.vaadindemo.ui.contact;
+package ru.spb.reshenie.vaadindemo.ui.moderators;
 
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -14,9 +14,8 @@ import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.shared.Registration;
-import ru.spb.reshenie.vaadindemo.data.entity.Company;
-import ru.spb.reshenie.vaadindemo.data.entity.Contact;
-import ru.spb.reshenie.vaadindemo.data.entity.Status;
+import ru.spb.reshenie.vaadindemo.data.entity.Club;
+import ru.spb.reshenie.vaadindemo.data.entity.Moderator;
 
 import java.util.List;
 
@@ -24,45 +23,41 @@ import java.util.List;
  * Created by vkondratiev on 03.02.2022
  * Description:
  */
-public class ContactForm extends FormLayout {
+public class ModeratorForm extends FormLayout {
 
-    private final Binder<Contact> binder = new BeanValidationBinder<>(Contact.class);
+    private final Binder<Moderator> binder = new BeanValidationBinder<>(Moderator.class);
 
     private final TextField firstName = new TextField("First name");
     private final TextField lastName = new TextField("Last name");
     private final EmailField email = new EmailField("Email");
-    private final ComboBox<Status> status = new ComboBox<>("Status");
-    private final ComboBox<Company> company = new ComboBox<>("Company");
+    private final ComboBox<Club> clubs = new ComboBox<>("Club");
     private final Button save = new Button("Save");
     private final Button delete = new Button("Delete");
     private final Button close = new Button("Cancel");
-    private Contact contact;
+    private Moderator moderator;
 
-    public ContactForm(List<Company> companies, List<Status> statuses) {
-        addClassName("contact-form");
+    public ModeratorForm(List<Club> clubs) {
+        addClassName("moderator-form");
+        configure(clubs);
 
-        configure(companies, statuses);
         addComponents();
     }
 
-    private void configure(List<Company> companies, List<Status> statuses) {
-        company.setItems(companies);
-        company.setItemLabelGenerator(Company::getName);
-
-        status.setItems(statuses);
-        status.setItemLabelGenerator(Status::getName);
+    private void configure(List<Club> clubs) {
+        this.clubs.setItems(clubs);
+        this.clubs.setItemLabelGenerator(Club::getName);
 
         binder.bindInstanceFields(this);
     }
 
-    public void setContact(Contact contact) {
-        this.contact = contact;
-        binder.readBean(contact);
+    public void setModerator(Moderator moderator) {
+        this.moderator = moderator;
+        binder.readBean(moderator);
 
     }
 
     private void addComponents() {
-        add(firstName, lastName, email, company, status);
+        add(firstName, lastName, email, clubs);
         add(createButtonsLayout());
     }
 
@@ -71,19 +66,18 @@ public class ContactForm extends FormLayout {
         delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
         save.addClickShortcut(Key.ENTER);
         close.addClickShortcut(Key.ESCAPE);
-        delete.addClickShortcut(Key.DELETE);
 
         save.addClickListener(e -> validateAndSave());
-        delete.addClickListener(e -> fireEvent(new ContactFormEvent.DeleteEvent(this, contact)));
-        close.addClickListener(e -> fireEvent(new ContactFormEvent.CloseEvent(this)));
+        delete.addClickListener(e -> fireEvent(new ModeratorFormEvent.DeleteEvent(this, moderator)));
+        close.addClickListener(e -> fireEvent(new ModeratorFormEvent.CloseEvent(this)));
 
         return new HorizontalLayout(save, delete, close);
     }
 
     private void validateAndSave() {
         try {
-            binder.writeBean(contact);
-            fireEvent(new ContactFormEvent.SaveEvent(this, contact));
+            binder.writeBean(moderator);
+            fireEvent(new ModeratorFormEvent.SaveEvent(this, moderator));
         } catch (ValidationException e) {
             e.printStackTrace();
         }

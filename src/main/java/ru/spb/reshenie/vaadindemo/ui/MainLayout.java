@@ -6,16 +6,10 @@ import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.NpmPackage;
-import com.vaadin.flow.component.html.Footer;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Header;
-import com.vaadin.flow.component.html.ListItem;
-import com.vaadin.flow.component.html.Nav;
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.html.UnorderedList;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouterLink;
-import ru.spb.reshenie.vaadindemo.ui.contact.ContactView;
+import ru.spb.reshenie.vaadindemo.ui.moderators.ModeratorView;
 
 /**
  * The main view is a top-level placeholder for other views.
@@ -42,7 +36,8 @@ public class MainLayout extends AppLayout {
 
         Header header = new Header(toggle, viewTitle);
         header.addClassNames("bg-base", "border-b", "border-contrast-10", "box-border", "flex", "h-xl", "items-center",
-                "w-full");
+                             "w-full"
+        );
         return header;
     }
 
@@ -50,8 +45,8 @@ public class MainLayout extends AppLayout {
         H2 appName = new H2("Vaadin Demo");
         appName.addClassNames("flex", "items-center", "h-xl", "m-0", "px-m", "text-m");
 
-        com.vaadin.flow.component.html.Section section = new com.vaadin.flow.component.html.Section(appName,
-                createNavigation(), createFooter());
+        com.vaadin.flow.component.html.Section section = new com.vaadin.flow.component.html.Section();
+        section.add(appName, createNavigation(), createFooter());
         section.addClassNames("flex", "flex-col", "items-stretch", "max-h-full", "min-h-full");
         return section;
     }
@@ -66,25 +61,24 @@ public class MainLayout extends AppLayout {
         list.addClassNames("list-none", "m-0", "p-0");
         nav.add(list);
 
-        for (MenuItemInfo menuItem : createMenuItems()) {
+        for (MenuItem menuItem : createMenuItems()) {
             list.add(menuItem);
 
         }
         return nav;
     }
 
-    private MenuItemInfo[] createMenuItems() {
-        return new MenuItemInfo[]{
-                new MenuItemInfo("Hello World", "la la-globe", HelloWorldView.class),
-                new MenuItemInfo("Contacts", "la la-list-ul", ContactView.class),
-                new MenuItemInfo("About", "la la-file", AboutView.class)
-        };
+    private Footer createFooter() {
+        Footer footer = new Footer();
+        footer.addClassNames("flex", "items-center", "my-s", "px-m", "py-xs");
+        return footer;
     }
 
-    private Footer createFooter() {
-        Footer layout = new Footer();
-        layout.addClassNames("flex", "items-center", "my-s", "px-m", "py-xs");
-        return layout;
+    private MenuItem[] createMenuItems() {
+        MenuItem helloWorld = new MenuItem("Hello World", "la la-globe", HelloWorldView.class);
+        MenuItem moderators = new MenuItem("Moderators", "la la-list-ul", ModeratorView.class);
+        MenuItem about = new MenuItem("About", "la la-file", AboutView.class);
+        return new MenuItem[] {helloWorld, moderators, about};
     }
 
     @Override
@@ -108,11 +102,11 @@ public class MainLayout extends AppLayout {
     /**
      * A simple navigation item component, based on ListItem element.
      */
-    public static class MenuItemInfo extends ListItem {
+    public static class MenuItem extends ListItem {
 
         private final Class<? extends Component> view;
 
-        public MenuItemInfo(String menuTitle, String iconClass, Class<? extends Component> view) {
+        public MenuItem(String menuTitle, String iconClass, Class<? extends Component> view) {
             this.view = view;
             RouterLink link = new RouterLink();
             // Use Lumo classnames for various styling

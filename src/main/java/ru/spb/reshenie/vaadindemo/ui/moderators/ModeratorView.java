@@ -1,4 +1,4 @@
-package ru.spb.reshenie.vaadindemo.ui.contact;
+package ru.spb.reshenie.vaadindemo.ui.moderators;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -11,7 +11,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import ru.spb.reshenie.vaadindemo.data.entity.Contact;
+import ru.spb.reshenie.vaadindemo.data.entity.Moderator;
 import ru.spb.reshenie.vaadindemo.data.service.CrmService;
 import ru.spb.reshenie.vaadindemo.ui.MainLayout;
 
@@ -20,18 +20,18 @@ import ru.spb.reshenie.vaadindemo.ui.MainLayout;
  * Description:
  */
 
-@Route(value = "contacts", layout = MainLayout.class)
-@PageTitle(value = "Vaadin Demo | Contacts")
-public class ContactView extends VerticalLayout {
+@Route(value = "moderators", layout = MainLayout.class)
+@PageTitle(value = "Vaadin Demo | Moderators")
+public class ModeratorView extends VerticalLayout {
 
-    private final Grid<Contact> grid = new Grid<>(Contact.class);
-    private ContactForm form;
+    private final Grid<Moderator> grid = new Grid<>(Moderator.class);
+    private ModeratorForm form;
     private final TextField tfFilter = new TextField();
     private final CrmService service;
 
-    public ContactView(CrmService service) {
+    public ModeratorView(CrmService service) {
         this.service = service;
-        addClassName("contact-view");
+        addClassName("moderator-view");
         setSizeFull();
 
         configureGrid();
@@ -47,79 +47,78 @@ public class ContactView extends VerticalLayout {
     }
 
     private Component createToolbar() {
-        tfFilter.setPlaceholder("Найти...");
+        tfFilter.setPlaceholder("search...");
         tfFilter.setClearButtonVisible(true);
         tfFilter.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
         tfFilter.setValueChangeMode(ValueChangeMode.LAZY);
 
-        Button addContact = new Button(new Icon(VaadinIcon.PLUS));
-        addContact.addClickListener(e -> addContact());
+        Button addModerator = new Button(new Icon(VaadinIcon.PLUS));
+        addModerator.addClickListener(e -> addModerator());
 
-        HorizontalLayout toolbar = new HorizontalLayout(tfFilter, addContact);
-        toolbar.setClassName("contact-toolbar");
+        HorizontalLayout toolbar = new HorizontalLayout(tfFilter, addModerator);
+        toolbar.setClassName("moderator-toolbar");
         return toolbar;
     }
 
-    private void addContact() {
+    private void addModerator() {
         grid.asSingleSelect().clear();
-        openEditor(new Contact());
+        openEditor(new Moderator());
     }
 
     private Component createContentLayout() {
         HorizontalLayout content = new HorizontalLayout(grid, form);
         content.setFlexGrow(2, grid);
         content.setFlexGrow(1, form);
-        content.setClassName("contact-content");
+        content.setClassName("moderator-content");
         content.setSizeFull();
         return content;
     }
 
     private void configureGrid() {
-        grid.addClassName("contact-grid");
+        grid.addClassName("moderator-grid");
         grid.setSizeFull();
         grid.setColumns("firstName", "lastName", "email");
-        grid.addColumn(contact -> contact.getStatus().getName()).setHeader("Status");
-        grid.addColumn(contact -> contact.getCompany().getName()).setHeader("Company");
+        grid.addColumn(moderator -> moderator.getClub().getName()).setHeader("Club");
 
         grid.asSingleSelect().addValueChangeListener(e -> openEditor(e.getValue()));
         updateList();
     }
 
     private void configureForm() {
-        form = new ContactForm(service.findAllCompanies(), service.findAllStatuses());
+        form = new ModeratorForm(service.findAllCompanies());
         form.setWidth("25em");
 
-        form.addListener(ContactFormEvent.SaveEvent.class, event1 -> {
-            service.saveContact(event1.getContact());
+        form.addListener(ModeratorFormEvent.SaveEvent.class, event1 -> {
+            service.saveModerator(event1.getModerator());
             updateList();
             closeEditor();
         });
-        form.addListener(ContactFormEvent.CloseEvent.class, event -> closeEditor());
-        form.addListener(ContactFormEvent.DeleteEvent.class, event -> {
-            service.deleteContact(event.getContact());
+        form.addListener(ModeratorFormEvent.CloseEvent.class, event -> closeEditor());
+        form.addListener(ModeratorFormEvent.DeleteEvent.class, event -> {
+            service.deleteModerator(event.getModerator());
             updateList();
             closeEditor();
         });
     }
 
-    private void openEditor(Contact contact) {
-        if (contact == null) {
+    private void openEditor(Moderator moderator) {
+        if (moderator == null) {
             closeEditor();
             return;
         }
-        form.setContact(contact);
+        form.setModerator(moderator);
         form.setVisible(true);
-        addClassName("contact-editing");
+        addClassName("moderator-editing");
     }
 
     private void closeEditor() {
-        form.setContact(null);
+        form.setModerator(null);
         form.setVisible(false);
-        removeClassName("contact-editing");
+        removeClassName("moderator-editing");
     }
 
     private void updateList() {
-        grid.setItems(service.findAllContacts(tfFilter.getValue()));
+        grid.setItems(service.findAllModerators(tfFilter.getValue()));
     }
 }
 
