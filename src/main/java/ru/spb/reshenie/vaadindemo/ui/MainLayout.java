@@ -9,12 +9,12 @@ import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouterLink;
-import ru.spb.reshenie.vaadindemo.ui.moderators.ModeratorView;
+import ru.spb.reshenie.vaadindemo.ui.moderator.ModeratorView;
 
 /**
  * The main view is a top-level placeholder for other views.
  */
-@PageTitle("Vaadin Demo | Main")
+@PageTitle("Speaking Club | Main")
 public class MainLayout extends AppLayout {
 
     private H2 viewTitle;
@@ -42,7 +42,7 @@ public class MainLayout extends AppLayout {
     }
 
     private Component createDrawerContent() {
-        H2 appName = new H2("Vaadin Demo");
+        H2 appName = new H2("Speaking Club");
         appName.addClassNames("flex", "items-center", "h-xl", "m-0", "px-m", "text-m");
 
         com.vaadin.flow.component.html.Section section = new com.vaadin.flow.component.html.Section();

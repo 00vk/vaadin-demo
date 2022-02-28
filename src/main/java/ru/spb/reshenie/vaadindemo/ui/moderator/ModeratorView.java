@@ -1,4 +1,4 @@
-package ru.spb.reshenie.vaadindemo.ui.moderators;
+package ru.spb.reshenie.vaadindemo.ui.moderator;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -9,10 +9,12 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import ru.spb.reshenie.vaadindemo.data.entity.Moderator;
-import ru.spb.reshenie.vaadindemo.data.service.CrmService;
+import ru.spb.reshenie.vaadindemo.data.service.ClubService;
+import ru.spb.reshenie.vaadindemo.data.service.ModeratorService;
 import ru.spb.reshenie.vaadindemo.ui.MainLayout;
 
 /**
@@ -21,16 +23,20 @@ import ru.spb.reshenie.vaadindemo.ui.MainLayout;
  */
 
 @Route(value = "moderators", layout = MainLayout.class)
-@PageTitle(value = "Vaadin Demo | Moderators")
+@PageTitle(value = "Speaking Club | Moderators")
 public class ModeratorView extends VerticalLayout {
 
     private final Grid<Moderator> grid = new Grid<>(Moderator.class);
     private ModeratorForm form;
     private final TextField tfFilter = new TextField();
-    private final CrmService service;
+    private final ModeratorService moderatorService;
+    private final ClubService clubService;
 
-    public ModeratorView(CrmService service) {
-        this.service = service;
+    public ModeratorView(ModeratorService moderatorService,
+                         ClubService clubService) {
+        this.moderatorService = moderatorService;
+        this.clubService = clubService;
+
         addClassName("moderator-view");
         setSizeFull();
 
@@ -39,6 +45,7 @@ public class ModeratorView extends VerticalLayout {
 
         addComponents();
         closeEditor();
+        updateList();
     }
 
     private void addComponents() {
@@ -47,10 +54,7 @@ public class ModeratorView extends VerticalLayout {
     }
 
     private Component createToolbar() {
-        tfFilter.setPlaceholder("search...");
-        tfFilter.setClearButtonVisible(true);
-        tfFilter.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
-        tfFilter.setValueChangeMode(ValueChangeMode.LAZY);
+        configureFilterTextField();
 
         Button addModerator = new Button(new Icon(VaadinIcon.PLUS));
         addModerator.addClickListener(e -> addModerator());
@@ -58,6 +62,14 @@ public class ModeratorView extends VerticalLayout {
         HorizontalLayout toolbar = new HorizontalLayout(tfFilter, addModerator);
         toolbar.setClassName("moderator-toolbar");
         return toolbar;
+    }
+
+    private void configureFilterTextField() {
+        tfFilter.setPlaceholder("search...");
+        tfFilter.setClearButtonVisible(true);
+        tfFilter.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
+        tfFilter.setValueChangeMode(ValueChangeMode.LAZY);
+        tfFilter.addValueChangeListener(e -> updateList());
     }
 
     private void addModerator() {
@@ -78,24 +90,25 @@ public class ModeratorView extends VerticalLayout {
         grid.addClassName("moderator-grid");
         grid.setSizeFull();
         grid.setColumns("firstName", "lastName", "email");
-        grid.addColumn(moderator -> moderator.getClub().getName()).setHeader("Club");
-
+        ValueProvider<Moderator, String> clubByModer = moderator -> moderator.getClub().getName();
+        grid.addColumn(clubByModer).setComparator(clubByModer).setHeader("Club");
+        grid.setPageSize(10);
+        grid.setSelectionMode(Grid.SelectionMode.SINGLE);
         grid.asSingleSelect().addValueChangeListener(e -> openEditor(e.getValue()));
-        updateList();
     }
 
     private void configureForm() {
-        form = new ModeratorForm(service.findAllCompanies());
+        form = new ModeratorForm(clubService.findAll());
         form.setWidth("25em");
 
-        form.addListener(ModeratorFormEvent.SaveEvent.class, event1 -> {
-            service.saveModerator(event1.getModerator());
+        form.addListener(ModeratorFormEvent.SaveEvent.class, event -> {
+            moderatorService.save(event.getModerator());
             updateList();
             closeEditor();
         });
         form.addListener(ModeratorFormEvent.CloseEvent.class, event -> closeEditor());
         form.addListener(ModeratorFormEvent.DeleteEvent.class, event -> {
-            service.deleteModerator(event.getModerator());
+            moderatorService.delete(event.getModerator());
             updateList();
             closeEditor();
         });
@@ -103,7 +116,6 @@ public class ModeratorView extends VerticalLayout {
 
     private void openEditor(Moderator moderator) {
         if (moderator == null) {
-            closeEditor();
             return;
         }
         form.setModerator(moderator);
@@ -118,7 +130,7 @@ public class ModeratorView extends VerticalLayout {
     }
 
     private void updateList() {
-        grid.setItems(service.findAllModerators(tfFilter.getValue()));
+        grid.setItems(moderatorService.findAll(tfFilter.getValue()));
     }
 }
 

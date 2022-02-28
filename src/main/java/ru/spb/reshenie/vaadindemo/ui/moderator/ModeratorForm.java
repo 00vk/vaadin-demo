@@ -1,4 +1,4 @@
-package ru.spb.reshenie.vaadindemo.ui.moderators;
+package ru.spb.reshenie.vaadindemo.ui.moderator;
 
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -17,7 +17,7 @@ import com.vaadin.flow.shared.Registration;
 import ru.spb.reshenie.vaadindemo.data.entity.Club;
 import ru.spb.reshenie.vaadindemo.data.entity.Moderator;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Created by vkondratiev on 03.02.2022
@@ -36,16 +36,17 @@ public class ModeratorForm extends FormLayout {
     private final Button close = new Button("Cancel");
     private Moderator moderator;
 
-    public ModeratorForm(List<Club> clubs) {
+    public ModeratorForm(Collection<Club> clubs) {
         addClassName("moderator-form");
         configure(clubs);
 
         addComponents();
     }
 
-    private void configure(List<Club> clubs) {
+    private void configure(Collection<Club> clubs) {
         this.clubs.setItems(clubs);
         this.clubs.setItemLabelGenerator(Club::getName);
+        this.clubs.setAllowCustomValue(false);
 
         binder.bindInstanceFields(this);
     }
@@ -53,7 +54,6 @@ public class ModeratorForm extends FormLayout {
     public void setModerator(Moderator moderator) {
         this.moderator = moderator;
         binder.readBean(moderator);
-
     }
 
     private void addComponents() {

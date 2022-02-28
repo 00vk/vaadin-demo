@@ -17,7 +17,7 @@ public class Club extends AbstractEntity {
 
     @OneToMany(mappedBy = "club")
     @Nullable
-    private List<Moderator> employees = new LinkedList<>();
+    private List<Moderator> moderators = new LinkedList<>();
 
     public String getName() {
         return name;
@@ -27,11 +27,11 @@ public class Club extends AbstractEntity {
         this.name = name;
     }
 
-    public List<Moderator> getEmployees() {
-        return employees;
+    public List<Moderator> getModerators() {
+        return moderators;
     }
 
-    public void setEmployees(List<Moderator> employees) {
-        this.employees = employees;
+    public void setModerators(List<Moderator> employees) {
+        this.moderators = employees;
     }
 }

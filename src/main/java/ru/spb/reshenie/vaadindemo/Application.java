@@ -18,7 +18,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @NpmPackage(value = "@fontsource/cairo", version = "4.5.0")
 @Theme(value = "vaadindemo", variant = Lumo.DARK)
-@PWA(name = "Vaadin Demo", shortName = "Vaadin Demo", offlineResources = {"images/logo.png"})
+@PWA(name = "Speaking Club", shortName = "Speaking Club", offlineResources = {"images/logo.png"})
 @NpmPackage(value = "line-awesome", version = "1.3.0")
 public class Application implements AppShellConfigurator {
 
